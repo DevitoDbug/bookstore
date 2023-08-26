@@ -2,7 +2,7 @@ package controller
 
 import "net/http"
 
-func GetBook(w http.ResponseWriter, r *http.Request) {
+func GetBookById(w http.ResponseWriter, r *http.Request) {
 
 }
 
