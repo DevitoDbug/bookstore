@@ -64,13 +64,32 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	if _, err = w.Write(res); err != nil {
-		log.Printf("Writting to response:\n %v\n", err)
+		log.Printf("Writting to response Error:\n %v\n", err)
 		return
 	}
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	ID, err := strconv.ParseInt(params["id"], 0, 0)
+	if err != nil {
+		log.Printf("Parsing error:\n %v\n", err)
+		return
+	}
+	b := models.DeleteBook(ID)
 
+	res, err := json.Marshal(b)
+	if err != nil {
+		log.Printf("Marshalling data:\n %v\n", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "pkglication/json")
+	w.WriteHeader(http.StatusOK)
+	if _, err = w.Write(res); err != nil {
+		log.Printf("Writting to response error:\n %v\n", err)
+		return
+	}
 }
 
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
