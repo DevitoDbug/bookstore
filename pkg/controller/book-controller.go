@@ -93,5 +93,41 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	var updates = &models.Book{}
+	utils.ParseBody(r, updates)
+	params := mux.Vars(r)
+	ID, err := strconv.ParseInt(params["id"], 0, 0)
+	if err != nil {
+		log.Printf("Parsing data error:\n %v\n", err)
+		return
+	}
 
+	updatedBookDetails, db := models.GetBookById(ID)
+	if db.Error != nil {
+		log.Printf("Error in the db:\n %v \n", db.Error)
+		return
+	}
+	if updates.Name != "" {
+		updatedBookDetails.Name = updates.Name
+	}
+	if updates.Author != "" {
+		updatedBookDetails.Author = updates.Author
+	}
+	if updates.Publication != "" {
+		updatedBookDetails.Publication = updates.Publication
+	}
+
+	db.Save(&updatedBookDetails)
+
+	res, err := json.Marshal(updatedBookDetails)
+	if err != nil {
+		log.Printf("Marshaling data error: \n %v\n", err)
+		return
+	}
+	w.Header().Set("Content-Type", "pkglication/json")
+	w.WriteHeader(http.StatusOK)
+	if _, err = w.Write(res); err != nil {
+		log.Printf("Writting to response error:\n %v\n", err)
+		return
+	}
 }
