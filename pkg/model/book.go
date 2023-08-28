@@ -14,8 +14,36 @@ type Book struct {
 	Publication string `json:"publication"`
 }
 
+// CreateBook -Attached to book struct because it must be executed for every book instance
+func (b *Book) CreateBook() *Book {
+	db.NewRecord(b)
+	db.Create(&b)
+	return b
+}
+
 func init() {
 	config.Connect()
 	db = config.GetBD()
 	db.AutoMigrate(&Book{})
+}
+
+func GetAllBooks() []Book {
+	var Books []Book
+
+	db.Find(&Books)
+	return Books
+}
+
+func GetBookById(Id int64) (*Book, *gorm.DB) {
+	var getBook Book
+	db := db.Where("ID=?", Id)
+	db.Find(&getBook)
+
+	return &getBook, db
+}
+
+func DeleteBook(ID int64) Book {
+	var book Book
+	db.Where("ID=?", ID).Delete(book)
+	return book
 }
