@@ -14,6 +14,7 @@ func main() {
 	routes.RegiserBookStore(r)
 	http.Handle("/", r)
 
+	log.Printf("Starting server at port%v\n", port)
 	err := http.ListenAndServe(port, r)
 	if err != nil {
 		log.Fatalf("%v\n", err)
